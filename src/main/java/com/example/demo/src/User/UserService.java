@@ -1,17 +1,12 @@
-package com.example.demo.src.user;
+package com.example.demo.src.User;
 
 
 
-import com.example.demo.config.BaseException;
-import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
-import com.example.demo.utils.SHA256;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import static com.example.demo.config.BaseResponseStatus.*;
 
 // Service Create, Update, Delete 의 로직 처리
 @Service
@@ -30,7 +25,7 @@ public class UserService {
         this.jwtService = jwtService;
 
     }
-
+/*
     //POST
     public PostUserRes createUser(PostUserReq postUserReq) throws BaseException {
         //중복
@@ -66,5 +61,5 @@ public class UserService {
         } catch(Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
-    }
+    }*/
 }

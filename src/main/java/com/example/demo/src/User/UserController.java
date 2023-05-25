@@ -1,22 +1,18 @@
-package com.example.demo.src.user;
+package com.example.demo.src.User;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.src.user.model.*;
+import com.example.demo.src.User.model.*;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
-import static com.example.demo.config.BaseResponseStatus.*;
-import static com.example.demo.utils.ValidationRegex.isRegexEmail;
-
 @RestController
-@RequestMapping("/app/users")
+@RequestMapping("/users")
 public class UserController {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -28,12 +24,35 @@ public class UserController {
     private final JwtService jwtService;
 
 
-
-
     public UserController(UserProvider userProvider, UserService userService, JwtService jwtService){
         this.userProvider = userProvider;
         this.userService = userService;
         this.jwtService = jwtService;
+    }
+    // Path Variable
+    // 특정 회원 프로필 조회
+    @ResponseBody
+    @GetMapping("/{userId}")
+    public BaseResponse<GetUserRes> getUserById(@PathVariable(value = "userId") long userId){
+        try{
+            GetUserRes getUserRes = userProvider.getUserById(userId);
+            return new BaseResponse<>(getUserRes);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    // Path Variable
+    // 특정 회원 배지 목록 조회
+    @ResponseBody
+    @GetMapping("/{userId}/badges")
+    public BaseResponse<List<GetUserBadgeRes>> getUserBadgeList(@PathVariable(value = "userId") long userId){
+        try{
+            List<GetUserBadgeRes> getUserRes = userProvider.getUserBadgeList(userId);
+            return new BaseResponse<>(getUserRes);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
     }
 
     /**
@@ -44,7 +63,7 @@ public class UserController {
      * @return BaseResponse<List<GetUserRes>>
      */
     //Query String
-    @ResponseBody
+    /*@ResponseBody
     @GetMapping("") // (GET) 127.0.0.1:9000/app/users
     public BaseResponse<List<GetUserRes>> getUsers(@RequestParam(required = false) String Email) {
         try{
@@ -60,11 +79,11 @@ public class UserController {
         }
     }
 
-    /**
+    *//**
      * 회원 1명 조회 API
      * [GET] /users/:userIdx
      * @return BaseResponse<GetUserRes>
-     */
+     *//*
     // Path-variable
     @ResponseBody
     @GetMapping("/{userIdx}") // (GET) 127.0.0.1:9000/app/users/:userIdx
@@ -79,11 +98,11 @@ public class UserController {
 
     }
 
-    /**
+    *//**
      * 회원가입 API
      * [POST] /users
      * @return BaseResponse<PostUserRes>
-     */
+     *//*
     // Body
     @ResponseBody
     @PostMapping("")
@@ -103,11 +122,11 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-    /**
+    *//**
      * 로그인 API
      * [POST] /users/logIn
      * @return BaseResponse<PostLoginRes>
-     */
+     *//*
     @ResponseBody
     @PostMapping("/logIn")
     public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq){
@@ -121,14 +140,14 @@ public class UserController {
         }
     }
 
-    /**
+    *//**
      * 유저정보변경 API
      * [PATCH] /users/:userIdx
      * @return BaseResponse<String>
-     */
+     *//*
     @ResponseBody
     @PatchMapping("/{userIdx}")
-    public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody User user){
+    public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody User User){
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
@@ -137,7 +156,7 @@ public class UserController {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
             //같다면 유저네임 변경
-            PatchUserReq patchUserReq = new PatchUserReq(userIdx,user.getUserName());
+            PatchUserReq patchUserReq = new PatchUserReq(userIdx,User.getUserName());
             userService.modifyUserName(patchUserReq);
 
             String result = "";
@@ -145,7 +164,7 @@ public class UserController {
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
-    }
+    }*/
 
 
 }

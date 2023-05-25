@@ -1,11 +1,9 @@
-package com.example.demo.src.user;
+package com.example.demo.src.User;
 
 
 import com.example.demo.config.BaseException;
-import com.example.demo.config.BaseResponseStatus;
-import com.example.demo.src.user.model.*;
+import com.example.demo.src.User.model.*;
 import com.example.demo.utils.JwtService;
-import com.example.demo.utils.SHA256;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +29,30 @@ public class UserProvider {
         this.jwtService = jwtService;
     }
 
-    public List<GetUserRes> getUsers() throws BaseException{
+    // 유저 프로필 정보 조회
+    public GetUserRes getUserById(long userId) throws BaseException{
+        try{
+            GetUserRes getUserRes = userDao.getUserById(userId);
+            return getUserRes;
+        }
+        catch (Exception exception) {
+            // Logger를 이용하여 에러를 로그에 기록한다
+            logger.error("Error!", exception);
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetUserBadgeRes> getUserBadgeList(long userId) throws BaseException{
+        try {
+            return userDao.getUserBadgeList(userId);
+        }
+        catch (Exception exception){
+            logger.error("Error!", exception);
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+/*    public List<GetUserRes> getUsers() throws BaseException{
         try{
             List<GetUserRes> getUserRes = userDao.getUsers();
             return getUserRes;
@@ -72,7 +93,7 @@ public class UserProvider {
     }
 
     public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException{
-        User user = userDao.getPwd(postLoginReq);
+        User User = userDao.getPwd(postLoginReq);
         String encryptPwd;
         try {
             encryptPwd=new SHA256().encrypt(postLoginReq.getPassword());
@@ -80,8 +101,8 @@ public class UserProvider {
             throw new BaseException(PASSWORD_DECRYPTION_ERROR);
         }
 
-        if(user.getPassword().equals(encryptPwd)){
-            int userIdx = user.getUserIdx();
+        if(User.getPassword().equals(encryptPwd)){
+            int userIdx = User.getUserIdx();
             String jwt = jwtService.createJwt(userIdx);
             return new PostLoginRes(userIdx,jwt);
         }
@@ -89,6 +110,6 @@ public class UserProvider {
             throw new BaseException(FAILED_TO_LOGIN);
         }
 
-    }
+    }*/
 
 }

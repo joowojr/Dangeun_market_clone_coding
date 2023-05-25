@@ -35,7 +35,6 @@ public enum BaseResponseStatus {
     FAILED_TO_LOGIN(false,HttpStatus.NOT_FOUND.value(),"없는 아이디거나 비밀번호가 틀렸습니다."),
 
 
-
     /**
      * 50 : Database, Server 오류
      */

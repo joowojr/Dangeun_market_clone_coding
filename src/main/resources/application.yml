@@ -10,7 +10,7 @@ spring:
       platform: mysql
 
   datasource:
-    url: jdbc:mysql://localhost:3306/springboot?autoReconnect=true&setTimezone=Asia/Seoul # 변경해주세요
-    username: test # Database ID
-    password: test1234^^ # Database Password
     driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://database-1.cd0wjlhvqle3.ap-northeast-2.rds.amazonaws.com:3306/dana_db?useSSL=FALSE
+    username: dana
+    password: ocean628
