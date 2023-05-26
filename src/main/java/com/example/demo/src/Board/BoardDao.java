@@ -1,9 +1,6 @@
 package com.example.demo.src.Board;
 
-import com.example.demo.src.Board.model.GetBoardImageRes;
-import com.example.demo.src.Board.model.GetLikeBoardRes;
-import com.example.demo.src.Board.model.GetBoardRes;
-import com.example.demo.src.Board.model.PostProductReq;
+import com.example.demo.src.Board.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -65,7 +62,7 @@ public class BoardDao {
                         "WHEN 0 THEN 'NO' " +
                         "    ELSE 'YES' " +
                         "    END AS 'hide', " +
-                        "(SELECT COUNT(*) FROM LikePost L WHERE L.post_id = B.board_id ) AS like_num " +
+                        "(SELECT COUNT(*) FROM LikeBoard L WHERE L.board_id = B.board_id ) AS like_num " +
                         "FROM Board B " +
                         "INNER JOIN Product PD " +
                         "ON B.board_id = PD.board_id " +
@@ -105,7 +102,7 @@ public class BoardDao {
                         "WHEN 0 THEN 'NO' " +
                         "    ELSE 'YES' " +
                         "    END AS 'hide', " +
-                        "(SELECT COUNT(*) FROM LikePost L WHERE L.post_id = B.board_id ) AS like_num " +
+                        "(SELECT COUNT(*) FROM LikeBoard L WHERE L.board_id = B.board_id ) AS like_num " +
                         "FROM Board B " +
                         "INNER JOIN Product PD " +
                         "ON B.board_id = PD.board_id " +
@@ -148,7 +145,7 @@ public class BoardDao {
                         "WHEN 0 THEN 'NO' " +
                         "    ELSE 'YES' " +
                         "    END AS 'hide', " +
-                        "(SELECT COUNT(*) FROM LikePost L WHERE L.post_id = P.board_id ) AS like_num " +
+                        "(SELECT COUNT(*) FROM LikeBoard L WHERE L.board_id = P.board_id ) AS like_num " +
                         "FROM Board P " +
                         "INNER JOIN Product PD " +
                         "ON P.board_id = PD.board_id " +
@@ -199,24 +196,24 @@ public class BoardDao {
 
     // 관심목록 조회
     public List<GetLikeBoardRes> getLikePostList(long userId){
-        long getlikepostlistparam = userId;
-        String getlikepostlistquery = "SELECT LP.like_id,B.board_id,C.category_name AS category, B.title, D.region_name AS region,B.price," +
+        long getLikeBoardlistparam = userId;
+        String getlikeBoardlistquery = "SELECT LP.like_id,B.board_id,C.category_name AS category, B.title, D.region_name AS region,B.price," +
                 "COUNT(LP.like_id) AS 'like_num' " +
                 "FROM Board B " +
-                "LEFT JOIN LikePost LP " +
-                "ON B.board_id = LP.post_id " +
+                "LEFT JOIN LikeBoard LP " +
+                "ON B.board_id = LP.board_id " +
                 "LEFT JOIN BoardCategory C " +
                 "ON B.category_id = C.category_id " +
                 "LEFT JOIN Region D " +
                 "ON B.region_id = D.region_id " +
-                "LEFT JOIN LikePost E " +
-                "ON B.board_id = E.post_id " +
+                "LEFT JOIN LikeBoard E " +
+                "ON B.board_id = E.board_id " +
                 "WHERE LP.user_id=? " +
                 "AND B.status='ACTIVE' " +
                 "GROUP BY B.board_id;";
 
         return this.template.query
-                (getlikepostlistquery,
+                (getlikeBoardlistquery,
                         (rs, rowNum) -> new GetLikeBoardRes(
                                 rs.getLong("like_id"),
                                 rs.getString("category"),
@@ -224,7 +221,23 @@ public class BoardDao {
                                 rs.getString("region"),
                                 rs.getInt("price"),
                                 rs.getInt("like_num")
-                        ),getlikepostlistparam
+                        ),getLikeBoardlistparam
                 );
+    }
+
+    // 관심 조회
+    public String getLikeStatus(long boardId, long userId){
+        String checkQuery = "SELECT exists(SELECT * FROM LikeBoard WHERE user_id=? AND board_id=?) AS 'check'";
+
+        return null;
+    }
+    // 관심 누르기
+
+    // 관심 취소
+    public PatchLikeBoardRes likeBoard(long boardId, long userId){
+        Object[] patchLikeBoardParams = {boardId, userId};
+        String putLikeBoardQuery = "UPDATE LikeBoard SET status = 'INACTIVE' WHERE board_id=? AND user_id=?;";
+        this.template.update(putLikeBoardQuery,patchLikeBoardParams);
+        return new PatchLikeBoardRes(boardId, userId);
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/reviews")
+@RequestMapping
 public class ReviewController {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ReviewProvider reviewProvider;
@@ -24,7 +24,7 @@ public class ReviewController {
     // Path Variable
     // 유저에 대한 리뷰 조회
     @ResponseBody
-    @GetMapping("/{userId}")
+    @GetMapping("users/{userId}/reviews")
     public BaseResponse<List<GetReviewRes>> getReviews(@PathVariable long userId){
         try {
             List<GetReviewRes> getReviewRes = reviewProvider.gerReviews(userId);

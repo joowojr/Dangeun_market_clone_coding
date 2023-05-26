@@ -28,10 +28,10 @@ public class CommentController {
     // Path variable
     // 게시물 1개 댓글 조회
     @ResponseBody
-    @GetMapping("/{postId}/comments")
-    public BaseResponse<List<GetCommentRes>> getComments(@PathVariable long postId){
+    @GetMapping("/{boardId}/comments")
+    public BaseResponse<List<GetCommentRes>> getComments(@PathVariable long boardId){
         try {
-            List<GetCommentRes> getCommentRes = commentProvider.getComments(postId);
+            List<GetCommentRes> getCommentRes = commentProvider.getComments(boardId);
             return new BaseResponse<>(getCommentRes);
         }
         catch (BaseException exception){
@@ -43,7 +43,7 @@ public class CommentController {
     // Request Body
     // 댓글 작성
     @ResponseBody
-    @PostMapping("/{postId}/comments")
+    @PostMapping("/{boardId}/comments")
     public BaseResponse<PostCommentRes> writeComment(@RequestBody PostCommentReq postCommentReq){
         try{
             PostCommentRes postCommentRes = commentService.writeComment(postCommentReq);
@@ -56,10 +56,10 @@ public class CommentController {
     //Path Variable
     // 댓글 삭제
     @ResponseBody
-    @DeleteMapping("/{postId}/comments/{commentId}")
-    public BaseResponse<DeleteCommentRes> deleteComment(@PathVariable long postId, @PathVariable long commentId){
+    @DeleteMapping("/{boardId}/comments/{commentId}")
+    public BaseResponse<DeleteCommentRes> deleteComment(@PathVariable long boardId, @PathVariable long commentId){
         try {
-            DeleteCommentRes deleteCommentRes = new DeleteCommentRes(commentService.deleteComment(commentId),postId);
+            DeleteCommentRes deleteCommentRes = new DeleteCommentRes(commentService.deleteComment(commentId), boardId);
             return new BaseResponse<>(deleteCommentRes);
         }
         catch (BaseException exception){

@@ -3,6 +3,7 @@ package com.example.demo.src.Board;
 import com.example.demo.config.BaseException;
 import com.example.demo.src.Board.model.PostProductReq;
 import com.example.demo.src.Board.model.PostProductRes;
+import com.example.demo.src.Board.model.PatchLikeBoardRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,15 @@ public class BoardService {
                 long boardId = boardDAO.writeProduct(postProductReq);
                 return new PostProductRes(boardId);
             }
+        catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    // 관심 누르기
+    public PatchLikeBoardRes likeBoard(long boardId, long userId) throws BaseException {
+        try {
+            return boardDAO.likeBoard(boardId,userId);
+        }
         catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }

@@ -29,6 +29,7 @@ public class UserController {
         this.userService = userService;
         this.jwtService = jwtService;
     }
+
     // Path Variable
     // 특정 회원 프로필 조회
     @ResponseBody
