@@ -31,7 +31,7 @@ public class UserController {
     }
 
     // Path Variable
-    // 특정 회원 프로필 조회
+    // 회원 1명 프로필 조회
     @ResponseBody
     @GetMapping("/{userId}")
     public BaseResponse<GetUserRes> getUserById(@PathVariable(value = "userId") long userId){
@@ -44,7 +44,7 @@ public class UserController {
     }
 
     // Path Variable
-    // 특정 회원 배지 목록 조회
+    // 회원 1명 배지 목록 조회
     @ResponseBody
     @GetMapping("/{userId}/badges")
     public BaseResponse<List<GetUserBadgeRes>> getUserBadgeList(@PathVariable(value = "userId") long userId){

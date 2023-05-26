@@ -19,9 +19,9 @@ public class BoardProvider {
     }
 
     // 포스트 1개 조회
-    public GetBoardRes getPostByPostId(long postId) throws BaseException {
+    public GetBoardRes getProduct(long boardId) throws BaseException {
         try {
-            GetBoardRes getBoardRes = boardDAO.getBoard(postId);
+            GetBoardRes getBoardRes = boardDAO.getProduct(boardId);
             return getBoardRes;
         }
         catch (Exception exception) {
@@ -30,23 +30,12 @@ public class BoardProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-    //포스트 여러개 조회
-    public List<GetBoardRes> getBoards() throws BaseException{
-        try {
-            List<GetBoardRes> getBoardRes = boardDAO.getBoards();
-            return getBoardRes;
-        }
-        catch (Exception exception){
-            // Logger를 이용하여 에러를 로그에 기록한다
-            logger.error("Error!", exception);
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
+
     //포스트 여러개 조회
     //카테고리로 조회
-    public List<GetBoardRes> getBoardsByCategory(Integer categoryId) throws BaseException{
+    public List<GetBoardRes> getProductList() throws BaseException{
         try {
-            List<GetBoardRes> getBoardRes = boardDAO.getBoardsByCategory(categoryId);
+            List<GetBoardRes> getBoardRes = boardDAO.getProductList();
             return getBoardRes;
         }
         catch (Exception exception){

@@ -28,7 +28,7 @@ public class BoardController {
     // Request Body
     // 중고 상품 게시물 작성
     @ResponseBody
-    @PostMapping("/boards")
+    @PostMapping("/boards/products")
     public BaseResponse<PostProductRes> writeProduct(@RequestBody PostProductReq postProductReq){
         try {
             PostProductRes postProductRes = boardService.writeProduct(postProductReq);
@@ -39,12 +39,12 @@ public class BoardController {
     }
 
     // Path Variable
-    // 포스트 1개 조회
+    // 중고 상품게시물 1개 조회
     @ResponseBody
-    @GetMapping("/boards/{boardId}")
-    public BaseResponse<GetBoardRes> getPostByPostId(@PathVariable long boardId){
+    @GetMapping("/boards/products/{boardId}")
+    public BaseResponse<GetBoardRes> getProduct(@PathVariable long boardId){
         try {
-            GetBoardRes getBoardRes = boardProvider.getPostByPostId(boardId);
+            GetBoardRes getBoardRes = boardProvider.getProduct(boardId);
             return new BaseResponse<>(getBoardRes);
 
         } catch (BaseException exception) {
@@ -53,17 +53,13 @@ public class BoardController {
     }
 
     // Query string
-    // 포스트 조회
-    // 카테고리로 조회
+    // 중고 상품 게시물 조회
     @ResponseBody
-    @GetMapping("/boards")
-    public BaseResponse<List<GetBoardRes>> getPosts(@RequestParam(required = false) Integer categoryId){
+    @GetMapping("/boards/products")
+    public BaseResponse<List<GetBoardRes>> getProductList(){
         try {
-            if (categoryId==null){
-                List<GetBoardRes> getBoardRes = boardProvider.getBoards();
-                return new BaseResponse<>(getBoardRes);
-            }
-            List<GetBoardRes> getBoardRes = boardProvider.getBoardsByCategory(categoryId);
+
+            List<GetBoardRes> getBoardRes = boardProvider.getProductList();
             return new BaseResponse<>(getBoardRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -84,17 +80,32 @@ public class BoardController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    // PathVariable & RequestParam
+    // 관심 누르기
+    @ResponseBody
+    @PostMapping("boards/{boardId}/like")
+    public BaseResponse<PostLikeBoardRes> putLikeBoard(@PathVariable long boardId,
+                                                        @RequestParam long userId){
+        try {
+            PostLikeBoardRes postLikeBoardRes = boardService.likeBoard(boardId,userId);
+            return new BaseResponse<>(postLikeBoardRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+
+    }
     // PathVariable & RequestParam
     // 관심 취소
     @ResponseBody
     @PatchMapping("boards/{boardId}/like")
-    public BaseResponse<PatchLikeBoardRes> putLikeBoard(@PathVariable long boardId,
+    public BaseResponse<PatchLikeBoardRes> unlikeBoard(@PathVariable long boardId,
                                                         @RequestParam long userId){
         try {
-            PatchLikeBoardRes patchLikeBoardRes = boardService.likeBoard(boardId,userId);
+            PatchLikeBoardRes patchLikeBoardRes = boardService.unlikeBoard(boardId,userId);
             return new BaseResponse<>(patchLikeBoardRes);
         } catch (BaseException exception) {
-                return new BaseResponse<>(exception.getStatus());
+            return new BaseResponse<>(exception.getStatus());
         }
 
     }

@@ -45,7 +45,13 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_USERNAME(false,HttpStatus.INTERNAL_SERVER_ERROR.value(),"유저네임 수정 실패"),
 
     PASSWORD_ENCRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 암호화에 실패하였습니다."),
-    PASSWORD_DECRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 복호화에 실패하였습니다.");
+    PASSWORD_DECRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 복호화에 실패하였습니다."),
+    /**
+     *
+     */
+    LIKE_BOARD_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(),"이미 좋아요를 누른 게시물입니다."),
+    UNLIKE_BOARD_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(),"좋아요를 취소할 수 없습니다."),
+    NOT_EXISTS_BOARD_ERROR(false,HttpStatus.INTERNAL_SERVER_ERROR.value(),"존재하지 않는 게시물입니다.");
 
 
     private final boolean isSuccess;

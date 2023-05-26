@@ -41,7 +41,7 @@ public class BoardDao {
     }
 
     // 게시물 1개 조회
-    public GetBoardRes getBoard(long postId){
+    public GetBoardRes getProduct(long postId){
         long getPostParam = postId;
         String getImageQuery =
                 "SELECT image_id, img_url FROM BoardImage WHERE board_id=? AND status='ACTIVE';";
@@ -124,10 +124,9 @@ public class BoardDao {
         }
         return getBoardRes;
     }
-    // 게시물 여러개 조회
-    // 카테고리 조회
-    public List<GetBoardRes> getBoardsByCategory(Integer categoryId){
-        int getPostParam = categoryId;
+
+    // 중고 게시물 목록 조회
+    public List<GetBoardRes> getProductList(){
         String getPostByCategoryQuery =
                 "SELECT P.board_id,P.title,P.content,PD.sale_status, " +
                         "U.nickname, U.profile_img, U.manner_temp,R.region_name AS region, " +
@@ -154,8 +153,8 @@ public class BoardDao {
                         "INNER JOIN Region R " +
                         "ON P.region_id = R.region_id " +
                         "WHERE P.status='ACTIVE'" +
-                        "AND P.category_id=?;";
-        List<GetBoardRes> getBoardRes = template.query(getPostByCategoryQuery,new productMapper(),getPostParam);
+                        "AND P.category_id=1;";
+        List<GetBoardRes> getBoardRes = template.query(getPostByCategoryQuery,new productMapper());
         for (int i=0; i<getBoardRes.size();i++){
             long postId= getBoardRes.get(i).getPost_id();
             String getImageQuery =
@@ -224,20 +223,31 @@ public class BoardDao {
                         ),getLikeBoardlistparam
                 );
     }
-
     // 관심 조회
+    public int checkLike(long boardId, long userId){
+        String query = "SELECT exists(SELECT * FROM LikeBoard WHERE user_id=? AND board_id=?) AS 'check';";
+        Object[] params = {boardId,userId};
+        return this.template.queryForObject(query,int.class,params);}
+
+    // LikeBoard status 조회
     public String getLikeStatus(long boardId, long userId){
-        String checkQuery = "SELECT exists(SELECT * FROM LikeBoard WHERE user_id=? AND board_id=?) AS 'check'";
+        String query = "SELECT status FROM LikeBoard WHERE user_id=? AND board_id=?;";
+        Object[] params = {boardId,userId};
+        return this.template.queryForObject(query,String.class,params);}
 
-        return null;
+    // 관심 누르기 
+    public PostLikeBoardRes likeBoard(long boardId, long userId){
+        Object[] postLikeBoardParams = {boardId, userId};
+        String postLikeBoardQuery = "INSERT INTO LikeBoard(board_id, user_id) VALUE (?,?);";
+        this.template.update(postLikeBoardQuery, postLikeBoardParams);
+        return new PostLikeBoardRes(boardId, userId);
+
     }
-    // 관심 누르기
-
     // 관심 취소
-    public PatchLikeBoardRes likeBoard(long boardId, long userId){
+    public PatchLikeBoardRes unlikeBoard(long boardId, long userId){
         Object[] patchLikeBoardParams = {boardId, userId};
-        String putLikeBoardQuery = "UPDATE LikeBoard SET status = 'INACTIVE' WHERE board_id=? AND user_id=?;";
-        this.template.update(putLikeBoardQuery,patchLikeBoardParams);
+        String patchLikeBoardQuery = "UPDATE LikeBoard SET status = 'INACTIVE' WHERE board_id=? AND user_id=?;";
+        this.template.update(patchLikeBoardQuery,patchLikeBoardParams);
         return new PatchLikeBoardRes(boardId, userId);
     }
 }
