@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class PostLikeBoardRes {
-    long boardId;
-    long userId;
+    long board_id;
+    long user_id;
 }

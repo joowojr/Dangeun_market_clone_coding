@@ -1,19 +1,16 @@
 package com.example.demo.src.Board.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class GetBoardRes {
+public class GetProductRes {
     long post_id;
     String title;
     String content;

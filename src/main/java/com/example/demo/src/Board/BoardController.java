@@ -20,9 +20,10 @@ public class BoardController {
     @Autowired
     private final BoardService boardService;
 
-    public BoardController(BoardProvider boardProvider, BoardService boardService) {
+    public BoardController(BoardProvider boardProvider, BoardService boardService, BoardDao boardDao) {
         this.boardProvider = boardProvider;
         this.boardService = boardService;
+        this.boardDao = boardDao;
     }
 
     // Request Body
@@ -42,10 +43,10 @@ public class BoardController {
     // 중고 상품게시물 1개 조회
     @ResponseBody
     @GetMapping("/boards/products/{boardId}")
-    public BaseResponse<GetBoardRes> getProduct(@PathVariable long boardId){
+    public BaseResponse<GetProductRes> getProduct(@PathVariable long boardId){
         try {
-            GetBoardRes getBoardRes = boardProvider.getProduct(boardId);
-            return new BaseResponse<>(getBoardRes);
+            GetProductRes getProductRes = boardProvider.getProduct(boardId);
+            return new BaseResponse<>(getProductRes);
 
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -56,16 +57,17 @@ public class BoardController {
     // 중고 상품 게시물 조회
     @ResponseBody
     @GetMapping("/boards/products")
-    public BaseResponse<List<GetBoardRes>> getProductList(){
+    public BaseResponse<List<GetProductRes>> getProductList(){
         try {
 
-            List<GetBoardRes> getBoardRes = boardProvider.getProductList();
-            return new BaseResponse<>(getBoardRes);
+            List<GetProductRes> getProductRes = boardProvider.getProductList();
+            return new BaseResponse<>(getProductRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
-
+    @Autowired
+    private final BoardDao boardDao;
 
     // Path Variable
     // 회원 관심 목록 조회
@@ -85,7 +87,7 @@ public class BoardController {
     // 관심 누르기
     @ResponseBody
     @PostMapping("boards/{boardId}/like")
-    public BaseResponse<PostLikeBoardRes> putLikeBoard(@PathVariable long boardId,
+    public BaseResponse<PostLikeBoardRes> likeBoard(@PathVariable long boardId,
                                                         @RequestParam long userId){
         try {
             PostLikeBoardRes postLikeBoardRes = boardService.likeBoard(boardId,userId);
@@ -95,19 +97,20 @@ public class BoardController {
         }
 
     }
+
     // PathVariable & RequestParam
-    // 관심 취소
+    // 관심 취소하기
     @ResponseBody
-    @PatchMapping("boards/{boardId}/like")
-    public BaseResponse<PatchLikeBoardRes> unlikeBoard(@PathVariable long boardId,
-                                                        @RequestParam long userId){
+    @DeleteMapping("boards/{boardId}/like")
+    public BaseResponse<DeleteLikeBoardRes> unlike(@PathVariable long boardId,
+                                                   @RequestParam long userId) {
         try {
-            PatchLikeBoardRes patchLikeBoardRes = boardService.unlikeBoard(boardId,userId);
-            return new BaseResponse<>(patchLikeBoardRes);
+            DeleteLikeBoardRes deleteLikeBoardRes = boardService.unlikeBoard(boardId,userId);
+            return new BaseResponse<>(deleteLikeBoardRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
-
     }
+
 
 }

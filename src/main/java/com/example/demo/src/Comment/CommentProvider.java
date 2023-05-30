@@ -5,6 +5,7 @@ import com.example.demo.src.Comment.model.GetCommentRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,6 +18,8 @@ public class CommentProvider {
     public CommentProvider(CommentDao commentDao) {
         this.commentDao = commentDao;
     }
+
+    @Transactional(readOnly = true)
     public List<GetCommentRes> getComments(long postId) throws BaseException {
         try {
             List<GetCommentRes> getCommentRes = commentDao.getComments(postId);

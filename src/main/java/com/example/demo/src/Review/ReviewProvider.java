@@ -5,6 +5,7 @@ import com.example.demo.src.Review.Model.GetReviewRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class ReviewProvider {
         this.reviewService = reviewService;
     }
 
-
+    @Transactional(readOnly = true)
     public List<GetReviewRes> gerReviews(long userId) throws BaseException {
         try {
             List<GetReviewRes> getReviewRes = reviewDao.getReviews(userId);

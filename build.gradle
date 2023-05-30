@@ -23,6 +23,9 @@ repositories {
 }
 
 dependencies {
+    // jwt
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
     implementation 'org.jetbrains:annotations:24.0.1'
 
     // Spring Boot Starter

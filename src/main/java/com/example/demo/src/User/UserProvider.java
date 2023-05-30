@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class UserProvider {
         this.userDao = userDao;
         this.jwtService = jwtService;
     }
-
+    @Transactional(readOnly = true)
     // 유저 프로필 정보 조회
     public GetUserRes getUserById(long userId) throws BaseException{
         try{
@@ -41,13 +42,29 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
+    @Transactional(readOnly = true)
     public List<GetUserBadgeRes> getUserBadgeList(long userId) throws BaseException{
         try {
             return userDao.getUserBadgeList(userId);
         }
         catch (Exception exception){
             logger.error("Error!", exception);
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    @Transactional(readOnly = true)
+    public int checkPhoneNum(String phoneNum) throws BaseException{
+        try{
+            return userDao.checkPhoneNum(phoneNum);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    @Transactional(readOnly = true)
+    public int checkNickname(String nickname) throws BaseException{
+        try{
+            return userDao.checkNickname(nickname);
+        } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
     }

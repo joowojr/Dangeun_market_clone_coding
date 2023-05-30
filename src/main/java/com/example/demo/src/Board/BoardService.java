@@ -4,10 +4,11 @@ import com.example.demo.config.BaseException;
 import com.example.demo.src.Board.model.PostLikeBoardRes;
 import com.example.demo.src.Board.model.PostProductReq;
 import com.example.demo.src.Board.model.PostProductRes;
-import com.example.demo.src.Board.model.PatchLikeBoardRes;
+import com.example.demo.src.Board.model.DeleteLikeBoardRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
@@ -32,44 +33,33 @@ public class BoardService {
     }
 
     //관심 누르기
+    @Transactional
     public PostLikeBoardRes likeBoard (long boardId,long userId) throws BaseException{
+        if (boardDAO.checkLike(1,1)==1){
+            throw new BaseException(LIKE_BOARD_ERROR);
+        }
         try {
-            if(boardDAO.checkLike(boardId,userId)==1){
-                //데이터 있으면
-                if(boardDAO.getLikeStatus(boardId,userId)=="INACTIVE"){
-                    // 이미 취소 눌러진 경우
-                   boardDAO.likeBoard(boardId,userId);
-                    System.out.println("성공");
-                   return new PostLikeBoardRes(boardId,userId);
-                }
-                System.out.println("라이크 에러");
-                throw new BaseException(LIKE_BOARD_ERROR);
-            } // 데이터 없으면
-            else boardDAO.likeBoard(boardId,userId);
-            return new PostLikeBoardRes(boardId,userId);
+                boardDAO.likeBoard(boardId, userId);
+                return new PostLikeBoardRes(boardId, userId);
+
         }
         catch (Exception exception) {
-            System.out.println("체크"+boardDAO.checkLike(boardId,userId)+"상태"+boardDAO.getLikeStatus(boardId,userId));
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    // 관심 취소
-    public PatchLikeBoardRes unlikeBoard(long boardId, long userId) throws BaseException {
-        try {
-            if(boardDAO.checkLike(boardId,userId)==1){
-                //데이터 있으면
-                if(boardDAO.getLikeStatus(boardId,userId)=="INACTIVE"){
-                    // 이미 취소 눌러진 경우
-                    throw new BaseException(UNLIKE_BOARD_ERROR);
-                }
-                boardDAO.unlikeBoard(boardId,userId);
-                return new PatchLikeBoardRes(boardId,userId);
-            }  // 데이터 없으면
-            else throw new BaseException(UNLIKE_BOARD_ERROR);
+    //관심 취소
+    @Transactional
+    public DeleteLikeBoardRes unlikeBoard(long boardId,long userId) throws BaseException{
+        if (boardDAO.checkLike(1,1)==0){
+            throw new BaseException(UNLIKE_BOARD_ERROR);
         }
-        catch (Exception exception){
-            System.out.println("체크"+boardDAO.checkLike(boardId,userId)+"상태"+boardDAO.getLikeStatus(boardId,userId));
+        try {
+            boardDAO.unlikeBoard(boardId, userId);
+            return new DeleteLikeBoardRes(boardId, userId);
+
+        }
+        catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }

@@ -6,6 +6,7 @@ import com.example.demo.src.Comment.model.PostCommentRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
 
@@ -21,14 +22,14 @@ public class CommentService {
         this.commentDao = commentDao;
         this.commentProvider = commentProvider;
     }
+
+    @Transactional
     public PostCommentRes writeComment(PostCommentReq postUserReq) throws BaseException {
-
-
-            long commentId = commentDao.writeComment(postUserReq);
-            return new PostCommentRes(commentId,postUserReq.getPostId());
-
-
+        long commentId = commentDao.writeComment(postUserReq);
+        return new PostCommentRes(commentId,postUserReq.getPostId());
     }
+
+    @Transactional
     public long deleteComment(long commentId) throws BaseException{
         try {
             return commentDao.deleteComment(commentId);

@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class PatchUserReq {
-    private int userIdx;
-    private String userName;
+    private long userId;
+    private String nickname;
+    private String profileImg;
 }

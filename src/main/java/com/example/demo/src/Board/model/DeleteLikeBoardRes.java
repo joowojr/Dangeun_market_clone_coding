@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class PatchLikeBoardRes {
-    long boardId;
-    long userId;
+public class DeleteLikeBoardRes {
+    long board_id;
+    long user_id;
 }
