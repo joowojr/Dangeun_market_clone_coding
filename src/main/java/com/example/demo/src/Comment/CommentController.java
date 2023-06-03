@@ -2,6 +2,7 @@ package com.example.demo.src.Comment;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.Comment.model.DeleteCommentRes;
 import com.example.demo.src.Comment.model.GetCommentRes;
 import com.example.demo.src.Comment.model.PostCommentReq;
@@ -25,8 +26,12 @@ public class CommentController {
         this.commentProvider = commentProvider;
         this.commentService = commentService;
     }
-    // Path variable
-    // 게시물 1개 댓글 조회
+
+    /**
+     * 댓글 목록 API
+     * [GET] living/:boardId/comments
+     * @return BaseResponse<List<GetCommentRes>
+     */
     @ResponseBody
     @GetMapping("/{boardId}/comments")
     public BaseResponse<List<GetCommentRes>> getComments(@PathVariable long boardId){
@@ -40,11 +45,17 @@ public class CommentController {
         }
     }
 
-    // Request Body
-    // 댓글 작성
+    /**
+     * 댓글 작성 API
+     * [GET] living/:boardId/comments
+     * @return BaseResponse<List<GetCommentRes>
+     */
     @ResponseBody
     @PostMapping("/{boardId}/comments")
-    public BaseResponse<PostCommentRes> writeComment(@RequestBody PostCommentReq postCommentReq){
+    public BaseResponse<PostCommentRes> writeComment(@RequestBody PostCommentReq postCommentReq) {
+        if (postCommentReq.getContent()==null || postCommentReq.getContent().isBlank()){
+            return new BaseResponse<>(BaseResponseStatus.POST_COMMENT_EMPTY_CONTENT);
+        }
         try{
             PostCommentRes postCommentRes = commentService.writeComment(postCommentReq);
             return new BaseResponse<>(postCommentRes);

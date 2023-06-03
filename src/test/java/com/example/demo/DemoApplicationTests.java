@@ -9,11 +9,15 @@ import com.example.demo.src.Board.model.PostProductReq;
 import com.example.demo.src.Comment.CommentDao;
 import com.example.demo.src.Comment.CommentService;
 import com.example.demo.src.Comment.model.PostCommentReq;
+import com.example.demo.src.Kakao.KakaoController;
+import com.example.demo.src.Kakao.KakaoService;
 import com.example.demo.src.User.UserDao;
-import com.example.demo.src.User.model.PostUserReq;
+import com.example.demo.src.User.UserProvider;
+import com.example.demo.src.User.UserService;
 import com.example.demo.utils.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
@@ -35,11 +39,18 @@ class DemoApplicationTests {
     UserDao userDao;
     @Autowired
     JwtService jwtService;
+    @Autowired
+    KakaoController kakaoController;
+    @Autowired
+    KakaoService kakaoService;
+    @Autowired
+    UserProvider userProvider;
     @Test
     void writecomment() throws BaseException {
         System.out.println(
                 commentService.writeComment(new PostCommentReq(1,1, null,"test",null,null)));
     }
+
 
     @Test
     void writeProduct() {
@@ -53,5 +64,20 @@ class DemoApplicationTests {
         System.out.println(boardDAO.checkLike(1,1));
         boardController.likeBoard(1,1);
     }
+
+    @Test
+    void kakaotest(){
+        kakaoController.kakaoCallback("d");
+    }
+
+    @Test
+    void kakao(){
+        kakaoService.getKaKaoAccessToken("4aOJCDNq3gI1wPPPpYzj-QlBbUbtoQ8SiGkTFVfkYT69PFX5ZDAWA2c2Wl1GixnoCmWuhAo9dNoAAAGIdDvB9w");
+    }
+    @Test
+    void createKakaoUser() throws BaseException {
+        kakaoService.getKakaoUserInfo("lfyXuPO6uOnlcAYz_LlqW7sZ1duFT-rqhubwEMMKCj11GQAAAYh0QXLg");
+    }
+
 
 }

@@ -17,10 +17,16 @@ public class CommentDao {
         this.template = new JdbcTemplate(dataSource);
     }
 
+    public int checkCommentId(long commentId){
+        long checkCommentIdParam = commentId;
+        String checkCommentIdQuery = "SELECT exists(SELECT comment_id FROM Comment WHERE comment_id=?)";
+        return this.template.queryForObject(checkCommentIdQuery,int.class,checkCommentIdParam);
+    }
+
     public List<GetCommentRes> getComments(long postId){
         long getCommentsParam = postId;
         String getCommentsQuery =
-                "SELECT C.comment_id, C.parent_id, C.content, U.nickname,U.profile_img, C.place, C.image_url, C.created_at, " +
+                "SELECT (SELECT C.comment_id, C.parent_id, C.content, U.nickname,U.profile_img, C.place, C.image_url, C.created_at, " +
                 "(SELECT R.region_name FROM Region R WHERE R.region_id =(SELECT UR.region_id FROM UserRegion UR WHERE UR.user_id = U.user_id AND UR.is_representive=1)) AS region, " +
                 "COUNT(CL.like_id) AS 'like_num' " +
                 "FROM Comment C " +
@@ -30,7 +36,7 @@ public class CommentDao {
                 "ON C.comment_id = CL.comment_id " +
                 "WHERE C.board_id=? " +
                 "AND C.status='ACTIVE' " +
-                "GROUP BY C.comment_id;";
+                "GROUP BY C.comment_id)  Comments";
         return this.template.query(getCommentsQuery,
                 (rs, rowNum) -> new GetCommentRes(
                         rs.getLong("comment_id"),

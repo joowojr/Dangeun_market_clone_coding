@@ -5,15 +5,22 @@ package com.example.demo.src.User;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.User.model.PatchUserReq;
+import com.example.demo.src.User.model.PostLoginRes;
 import com.example.demo.src.User.model.PostUserReq;
 import com.example.demo.src.User.model.PostUserRes;
 import com.example.demo.utils.JwtService;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
@@ -35,9 +42,13 @@ public class UserService {
 
     }
 
-    //POST
+    // 회원가입
     @Transactional
     public PostUserRes createUser(@NotNull PostUserReq postUserReq) throws BaseException {
+        // 이메일 중복
+        if (!(postUserReq.getEmail()==null) & userProvider.checkEmail(postUserReq.getEmail())==1){
+            throw new BaseException(POST_USERS_EXISTS_EMAIL);
+        }
         // 전화번호 중복
         if (userProvider.checkPhoneNum(postUserReq.getPhoneNum())==1){
             throw new BaseException(BaseResponseStatus.POST_USERS_EXISTS_PHONENUM);
@@ -55,6 +66,18 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+    @Transactional
+    public PostLoginRes login(String phoneNum) throws BaseException{
+        try{
+            long userId = userDao.getUserByPhoneNum(phoneNum);
+            //jwt 발급.
+            String jwt = jwtService.createJwt(userId);
+            return new PostLoginRes(userId,jwt);
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     @Transactional
     public void modifyProfile(PatchUserReq patchUserReq) throws BaseException {
         try{

@@ -1,7 +1,9 @@
 package com.example.demo.src.Comment;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.Board.BoardDao;
 import com.example.demo.src.Comment.model.GetCommentRes;
+import com.example.demo.utils.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,20 +11,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
+import static com.example.demo.config.BaseResponseStatus.*;
+
 @Service
 public class CommentProvider {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
-    public final CommentDao commentDao;
+    private final CommentDao commentDao;
+    private final BoardDao boardDao;
 
-    public CommentProvider(CommentDao commentDao) {
+    public CommentProvider(CommentDao commentDao, BoardDao boardDao) {
         this.commentDao = commentDao;
+        this.boardDao = boardDao;
     }
 
     @Transactional(readOnly = true)
-    public List<GetCommentRes> getComments(long postId) throws BaseException {
+    public List<GetCommentRes> getComments(long boardId) throws BaseException {
+        if (boardDao.checkBoardId(boardId)==0){
+            throw  new BaseException(BOARDS_EMPTY_BOARD_ID);
+        }
         try {
-            List<GetCommentRes> getCommentRes = commentDao.getComments(postId);
+            List<GetCommentRes> getCommentRes = commentDao.getComments(boardId);
             return getCommentRes;
         }
         catch (Exception exception){
@@ -31,4 +39,6 @@ public class CommentProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+
 }

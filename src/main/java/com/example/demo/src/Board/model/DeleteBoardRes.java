@@ -7,7 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class PostLikeBoardRes {
-    long boardId;
-    long userId;
+public class DeleteBoardRes {
+    private long boardId;
 }

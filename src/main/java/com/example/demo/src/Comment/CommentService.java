@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.demo.config.BaseResponseStatus.COMMENT_EMPTY_COMMENT_ID;
 import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
 
 @Service
@@ -31,6 +32,9 @@ public class CommentService {
 
     @Transactional
     public long deleteComment(long commentId) throws BaseException{
+        if (commentDao.checkCommentId(commentId)==0){
+            throw  new BaseException(COMMENT_EMPTY_COMMENT_ID);
+        }
         try {
             return commentDao.deleteComment(commentId);
         }

@@ -20,6 +20,13 @@ public class BoardDao {
         this.template = new JdbcTemplate(dataSource);
     }
 
+    //
+    public int checkBoardId(long boardId){
+        String checkBoardIdQuery = "SELECT exists(SELECT board_id FROM Board WHERE board_id=?)";
+        long checkBoardIdParam = boardId;
+        return this.template.queryForObject(checkBoardIdQuery,int.class,checkBoardIdParam);
+    }
+
     // 중고 상품게시물 작성
     public long writeProduct(@NotNull PostProductReq postProductReq){
         String boardQuery = "INSERT INTO Board(user_id,category_id,region_id,title,content,price) VALUE(?,?,?,?,?,?);";
@@ -114,7 +121,7 @@ public class BoardDao {
                         "WHERE B.status='ACTIVE';" ;
         List<GetProductRes> getProductRes = template.query(getPostByCategoryQuery,new productMapper());
         for (int i = 0; i< getProductRes.size(); i++){
-            long postId= getProductRes.get(i).getPost_id();
+            long postId= getProductRes.get(i).getPostId();
             String getImageQuery =
                     "SELECT image_id, img_url FROM BoardImage WHERE board_id=? AND status='ACTIVE';";
             List<GetBoardImageRes> getBoardImageRes =
@@ -157,7 +164,7 @@ public class BoardDao {
                         "AND P.category_id=1;";
         List<GetProductRes> getProductRes = template.query(getPostByCategoryQuery,new productMapper());
         for (int i = 0; i< getProductRes.size(); i++){
-            long postId= getProductRes.get(i).getPost_id();
+            long postId= getProductRes.get(i).getPostId();
             String getImageQuery =
                     "SELECT image_id, img_url FROM BoardImage WHERE board_id=? AND status='ACTIVE';";
             List<GetBoardImageRes> getBoardImageRes =
@@ -174,24 +181,38 @@ public class BoardDao {
         @Override
         public GetProductRes mapRow(ResultSet rs, int rowNum) throws SQLException {
             GetProductRes getProductRes = new GetProductRes();
-            getProductRes.setPost_id(rs.getLong("board_id"));
+            getProductRes.setPostId(rs.getLong("board_id"));
             getProductRes.setTitle(rs.getString("title"));
             getProductRes.setContent(rs.getString("content"));
-            getProductRes.setSale_status(rs.getString("sale_status"));
+            getProductRes.setSaleStatus(rs.getString("sale_status"));
             getProductRes.setNickname(rs.getString("nickname"));
-            getProductRes.setProfile_img(rs.getString("profile_img"));
-            getProductRes.setManner_temp(rs.getFloat("manner_temp"));
+            getProductRes.setProfileImg(rs.getString("profile_img"));
+            getProductRes.setMannerTemp(rs.getFloat("manner_temp"));
             getProductRes.setRegion(rs.getString("region"));
             getProductRes.setRegion(rs.getString("region"));
             getProductRes.setCategory(rs.getString("category"));
-            getProductRes.setPulled_at(rs.getTimestamp("pulled_at").toLocalDateTime());
+            getProductRes.setPulledAt(rs.getTimestamp("pulled_at").toLocalDateTime());
             getProductRes.setPrice( rs.getInt("price"));
-            getProductRes.setPrice_offer(rs.getString("price_offer"));
+            getProductRes.setPriceOffer(rs.getString("price_offer"));
             getProductRes.setDonation(rs.getString("donation"));
             getProductRes.setHide( rs.getString("hide"));
-            getProductRes.setLike_num(rs.getInt("like_num"));
+            getProductRes.setLikeNum(rs.getInt("like_num"));
             return getProductRes;
         }
+    }
+    //게시물 삭제
+    public long deleteBoard(long boardId){
+        String deleteBoardQuery = "DELETE FROM Board WHERE board_id=?;";
+        long boardIdParam = boardId;
+        this.template.queryForObject(deleteBoardQuery,long.class,boardIdParam);
+        return boardId;
+    }
+    //중고 상품 삭제
+    public long deleteProduct(long boardId){
+        String deleteProductQuery = "DELETE FROM Product WHERE board_id=?;";
+        long boardIdParam = boardId;
+        this.template.queryForObject(deleteProductQuery,long.class,boardIdParam);
+        return boardId;
     }
 
     // 관심목록 조회
@@ -226,9 +247,9 @@ public class BoardDao {
     }
     // 관심 조회
     public int checkLike(long boardId, long userId){
-        String query = "SELECT exists(SELECT * FROM LikeBoard WHERE user_id=? AND board_id=?) AS 'check';";
+        String checkLikeQuery = "SELECT exists(SELECT * FROM LikeBoard WHERE user_id=? AND board_id=?) AS 'check';";
         Object[] params = {boardId,userId};
-        return this.template.queryForObject(query,int.class,params);}
+        return this.template.queryForObject(checkLikeQuery,int.class,params);}
 
     // 관심 누르기 
     public PostLikeBoardRes likeBoard(long boardId, long userId){

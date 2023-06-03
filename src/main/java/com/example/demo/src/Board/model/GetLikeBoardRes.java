@@ -8,11 +8,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class GetLikeBoardRes {
-    long like_post_id;
+    long likeId;
     String category;
     String title;
     /*GetBoardImageRes thumbnail;*/
     String region;
     int price;
-    int like_num;
+    int likeNum;
 }

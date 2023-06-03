@@ -17,7 +17,7 @@ public class GetUserRes {
     String email;
     float redeal_rate;
     float response_rate;
-    LocalDateTime signup_date;
+    String signup_date;
     String status;
     float manner_temp;
     String region;

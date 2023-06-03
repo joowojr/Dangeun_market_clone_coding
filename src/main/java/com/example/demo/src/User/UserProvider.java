@@ -4,6 +4,7 @@ package com.example.demo.src.User;
 import com.example.demo.config.BaseException;
 import com.example.demo.src.User.model.*;
 import com.example.demo.utils.JwtService;
+import com.example.demo.utils.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +30,14 @@ public class UserProvider {
         this.userDao = userDao;
         this.jwtService = jwtService;
     }
+
+
     @Transactional(readOnly = true)
-    // 유저 프로필 정보 조회
+    // 유저 1명 프로필 정보 조회
     public GetUserRes getUserById(long userId) throws BaseException{
+        if (userDao.checkUserId(userId)==0){
+            throw new BaseException(USERS_EMPTY_USER_ID);
+        }
         try{
             GetUserRes getUserRes = userDao.getUserById(userId);
             return getUserRes;
@@ -42,8 +48,23 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    @Transactional
+    public Page<List<GetUserRes>> getUsers(int size, int currentPage) throws BaseException {
+        try {
+            Page<List<GetUserRes>> result = new Page<>(currentPage,size,userDao.getUsersTotal());
+            result.setData(userDao.getUsers(size,result.getStart()));
+            return result;
+        }catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
     @Transactional(readOnly = true)
     public List<GetUserBadgeRes> getUserBadgeList(long userId) throws BaseException{
+        if (userDao.checkUserId(userId)==0){
+            throw new BaseException(USERS_EMPTY_USER_ID);
+        }
         try {
             return userDao.getUserBadgeList(userId);
         }
@@ -64,6 +85,15 @@ public class UserProvider {
     public int checkNickname(String nickname) throws BaseException{
         try{
             return userDao.checkNickname(nickname);
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public int checkEmail(String email) throws BaseException{
+        try{
+            return userDao.checkEmail(email);
         } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }

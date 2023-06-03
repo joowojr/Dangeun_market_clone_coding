@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
@@ -12,4 +13,6 @@ import lombok.Setter;
 public class PostUserReq {
     String nickname;
     String phoneNum;
+    @Nullable
+    String email;
 }

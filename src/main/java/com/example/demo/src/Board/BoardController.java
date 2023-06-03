@@ -2,16 +2,21 @@ package com.example.demo.src.Board;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.Board.model.*;
+import com.example.demo.utils.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.example.demo.config.BaseResponseStatus.*;
+
 @RestController
-@RequestMapping()
+@RequestMapping("/boards")
 public class BoardController {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -19,6 +24,8 @@ public class BoardController {
     private final BoardProvider boardProvider;
     @Autowired
     private final BoardService boardService;
+    @Autowired
+    private final BoardDao boardDao;
 
     public BoardController(BoardProvider boardProvider, BoardService boardService, BoardDao boardDao) {
         this.boardProvider = boardProvider;
@@ -26,11 +33,23 @@ public class BoardController {
         this.boardDao = boardDao;
     }
 
-    // Request Body
-    // 중고 상품 게시물 작성
+    /**
+     * 중고 게시물 작성 API
+     * [POST] /boards/products
+     * @return BaseResponse<PostProductRes>
+     */
     @ResponseBody
-    @PostMapping("/boards/products")
+    @PostMapping("/products")
     public BaseResponse<PostProductRes> writeProduct(@RequestBody PostProductReq postProductReq){
+        if (postProductReq.getTitle()==null || postProductReq.getTitle().isBlank()){
+            return new BaseResponse<>(POST_BOARDS_EMPTY_TITLE);
+        }
+        if (postProductReq.getContent()==null || postProductReq.getContent().isBlank()){
+            return new BaseResponse<>(POST_BOARDS_EMPTY_CONTENT);
+        }
+        if (postProductReq.getImages()==null || postProductReq.getImages().isEmpty()){
+            return new BaseResponse<>(POST_BOARDS_EMPTY_IMAGE);
+        }
         try {
             PostProductRes postProductRes = boardService.writeProduct(postProductReq);
             return new BaseResponse<>(postProductRes);
@@ -39,10 +58,13 @@ public class BoardController {
         }
     }
 
-    // Path Variable
-    // 중고 상품게시물 1개 조회
+    /**
+     * 중고 게시물 1개 API
+     * [POST] /boards/products/:boardId
+     * @return BaseResponse<GetProductRes>
+     */
     @ResponseBody
-    @GetMapping("/boards/products/{boardId}")
+    @GetMapping("/products/{boardId}")
     public BaseResponse<GetProductRes> getProduct(@PathVariable long boardId){
         try {
             GetProductRes getProductRes = boardProvider.getProduct(boardId);
@@ -53,8 +75,11 @@ public class BoardController {
         }
     }
 
-    // Query string
-    // 중고 상품 게시물 조회
+    /**
+     * 중고 게시물 목록 조회 API
+     * [POST] /boards/products
+     * @return BaseResponse<List<GetProductRes>>
+     */
     @ResponseBody
     @GetMapping("/boards/products")
     public BaseResponse<List<GetProductRes>> getProductList(){
@@ -66,27 +91,33 @@ public class BoardController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
-    @Autowired
-    private final BoardDao boardDao;
-
-    // Path Variable
-    // 회원 관심 목록 조회
+    /**
+     * 중고 게시물 삭제 API
+     * [POST] /boards/products/:boardId
+     * @return BaseResponse<List<GetProductRes>>
+     */
     @ResponseBody
-    @GetMapping("users/{userId}/like")
-    public BaseResponse<List<GetLikeBoardRes>> getLikeBoardList(@PathVariable long userId){
+    @DeleteMapping("/products/{boardId}")
+    public BaseResponse<DeleteBoardRes> deleteProduct(@PathVariable Long boardId){
+        if (boardId==null){
+            return new BaseResponse<>(BOARDS_EMPTY_BOARD_ID);
+        }
         try {
-            List<GetLikeBoardRes> getLikeBoardRes = boardProvider.getLikePostResList(userId);
-            return new BaseResponse<>(getLikeBoardRes);
+            DeleteBoardRes deleteBoardRes = boardService.deleteProduct(boardId);
+            return new BaseResponse<>(deleteBoardRes);
         }
         catch (BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
     }
 
-    // PathVariable & RequestParam
-    // 관심 누르기
+    /**
+     * 관심 API
+     * [POST] /boards/:boardId/likes
+     * @return BaseResponse<PostLikeBoardRes>
+     */
     @ResponseBody
-    @PostMapping("boards/{boardId}/like")
+    @PostMapping("/{boardId}/likes")
     public BaseResponse<PostLikeBoardRes> likeBoard(@PathVariable long boardId,
                                                         @RequestParam long userId){
         try {
@@ -98,10 +129,13 @@ public class BoardController {
 
     }
 
-    // PathVariable & RequestParam
-    // 관심 취소하기
+    /**
+     * 관심 취소 API
+     * [POST] /boards/:boardId/likes
+     * @return BaseResponse<DeleteLikeBoardRes>
+     */
     @ResponseBody
-    @DeleteMapping("boards/{boardId}/like")
+    @DeleteMapping("/{boardId}/likes")
     public BaseResponse<DeleteLikeBoardRes> unlike(@PathVariable long boardId,
                                                    @RequestParam long userId) {
         try {
@@ -111,6 +145,5 @@ public class BoardController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
-
 
 }

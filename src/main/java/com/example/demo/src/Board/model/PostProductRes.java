@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class PostProductRes {
-    long board_id;
+    long boardId;
 }

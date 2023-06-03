@@ -36,6 +36,30 @@ public enum BaseResponseStatus {
     POST_USERS_EXISTS_NICKNAME(false,HttpStatus.BAD_REQUEST.value(),"중복된 닉네임입니다."),
     FAILED_TO_LOGIN(false,HttpStatus.NOT_FOUND.value(),"없는 전화번호입니다."),
 
+    // [POST] users/kakao
+    POST_USERS_EMPTY_EMAIL(false, HttpStatus.BAD_REQUEST.value(), "이메일을 입력해주세요."),
+    POST_USERS_INVALID_EMAIL(false, HttpStatus.BAD_REQUEST.value(), "이메일 형식을 확인해주세요."),
+    POST_USERS_EXISTS_EMAIL(false, HttpStatus.BAD_REQUEST.value(), "중복돤 이메일입니다."),
+
+    // boards
+    BOARDS_EMPTY_BOARD_ID(false, HttpStatus.BAD_REQUEST.value(), "게시물 아이디 값을 확인해주세요."),
+
+    // [POST] /boards
+    POST_BOARDS_EMPTY_TITLE(false, HttpStatus.BAD_REQUEST.value(), "제목을 입력해주세요."),
+    POST_BOARDS_EMPTY_CONTENT(false, HttpStatus.BAD_REQUEST.value(), "내용을 입력해주세요."),
+    POST_BOARDS_EMPTY_IMAGE(false, HttpStatus.BAD_REQUEST.value(), "사진을 1장 이상 첨부해주세요."),
+
+
+    // comments
+    COMMENT_EMPTY_COMMENT_ID(false, HttpStatus.BAD_REQUEST.value(), "댓글 아이디 값을 확인해주세요."),
+
+    // [POST] /living/:boardId/comments
+    POST_COMMENT_EMPTY_CONTENT(false, HttpStatus.BAD_REQUEST.value(), "내용을 입력해주세요."),
+
+    // login/kakao
+    KAKAO_ERROR(false, HttpStatus.BAD_REQUEST.value(), "카카오 액."),
+
+
 
     /**
      * 50 : Database, Server 오류

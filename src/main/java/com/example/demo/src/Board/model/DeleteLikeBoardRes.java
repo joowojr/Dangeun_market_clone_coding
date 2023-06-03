@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class DeleteLikeBoardRes {
-    long board_id;
-    long user_id;
+    long boardId;
+    long userId;
 }

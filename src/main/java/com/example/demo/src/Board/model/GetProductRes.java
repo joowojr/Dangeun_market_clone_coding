@@ -11,22 +11,22 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class GetProductRes {
-    long post_id;
+    long postId;
     String title;
     String content;
     /*@JsonInclude(JsonInclude.Include.NON_NULL)*/
     List<GetBoardImageRes> images;
-    String sale_status;
+    String saleStatus;
     String nickname;
-    String profile_img;
-    float manner_temp;
+    String profileImg;
+    float mannerTemp;
     String region;
     String category;
-    LocalDateTime pulled_at;
+    LocalDateTime pulledAt;
     int price;
-    String price_offer;
+    String priceOffer;
     String donation;
     String hide;
-    int like_num;
+    int likeNum;
 
 }

@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class GetBoardImageRes {
-    long image_id;
-    String img_url;
+    long imageId;
+    String imgUrl;
 }
