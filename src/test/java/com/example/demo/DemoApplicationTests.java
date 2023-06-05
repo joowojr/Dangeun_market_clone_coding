@@ -16,14 +16,19 @@ import com.example.demo.src.User.UserProvider;
 import com.example.demo.src.User.UserService;
 import com.example.demo.utils.JwtService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@ExtendWith(SpringExtension.class) //Junit5
 @SpringBootTest
+@ActiveProfiles("test") // 괄호 안에 실행 환경을 명시해준다.
 class DemoApplicationTests {
     @Autowired
     CommentService commentService;
@@ -65,18 +70,15 @@ class DemoApplicationTests {
         boardController.likeBoard(1,1);
     }
 
-    @Test
-    void kakaotest(){
-        kakaoController.kakaoCallback("d");
-    }
+
 
     @Test
     void kakao(){
-        kakaoService.getKaKaoAccessToken("4aOJCDNq3gI1wPPPpYzj-QlBbUbtoQ8SiGkTFVfkYT69PFX5ZDAWA2c2Wl1GixnoCmWuhAo9dNoAAAGIdDvB9w");
+        kakaoService.getKakaoAccessToken("PKNf4Qku9t45VIZ_jpcEtBVrcjQGau7lmMXAaGSYG-WnDhSuqGw9uyA7oSSHb2AzC9XyVQoqJQ8AAAGIhp4NnQ");
     }
     @Test
     void createKakaoUser() throws BaseException {
-        kakaoService.getKakaoUserInfo("lfyXuPO6uOnlcAYz_LlqW7sZ1duFT-rqhubwEMMKCj11GQAAAYh0QXLg");
+        kakaoController.getKaKaoUserInfo("jQKbCdTMcB--xu4zctUPLDUInMdiol-LWsM2NfzznQZxES9PAG3IQmSgXbx1f4LuKRvJ6go9dNoAAAGIhqTI3w");
     }
 
 

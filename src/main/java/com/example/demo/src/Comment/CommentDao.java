@@ -4,9 +4,12 @@ import com.example.demo.src.Comment.model.GetCommentRes;
 import com.example.demo.src.Comment.model.PostCommentReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 @Repository
 public class CommentDao {
@@ -22,11 +25,11 @@ public class CommentDao {
         String checkCommentIdQuery = "SELECT exists(SELECT comment_id FROM Comment WHERE comment_id=?)";
         return this.template.queryForObject(checkCommentIdQuery,int.class,checkCommentIdParam);
     }
-
-    public List<GetCommentRes> getComments(long postId){
-        long getCommentsParam = postId;
+    // 게시물별 댓글 조회
+    public List<GetCommentRes> getCommentsByBoard(long boardId){
+        long getCommentsParam = boardId;
         String getCommentsQuery =
-                "SELECT (SELECT C.comment_id, C.parent_id, C.content, U.nickname,U.profile_img, C.place, C.image_url, C.created_at, " +
+                "SELECT  C.comment_id, C.parent_id, C.content, U.nickname,U.profile_img, C.place, C.image_url, C.created_at, " +
                 "(SELECT R.region_name FROM Region R WHERE R.region_id =(SELECT UR.region_id FROM UserRegion UR WHERE UR.user_id = U.user_id AND UR.is_representive=1)) AS region, " +
                 "COUNT(CL.like_id) AS 'like_num' " +
                 "FROM Comment C " +
@@ -36,20 +39,26 @@ public class CommentDao {
                 "ON C.comment_id = CL.comment_id " +
                 "WHERE C.board_id=? " +
                 "AND C.status='ACTIVE' " +
-                "GROUP BY C.comment_id)  Comments";
-        return this.template.query(getCommentsQuery,
-                (rs, rowNum) -> new GetCommentRes(
-                        rs.getLong("comment_id"),
-                        rs.getLong("parent_id"),
-                        rs.getString("content"),
-                        rs.getString("nickname"),
-                        rs.getString("profile_img"),
-                        rs.getString("place"),
-                        rs.getString("image_url"),
-                        rs.getTimestamp("created_at").toLocalDateTime(),
-                        rs.getString("region"),
-                        rs.getInt("like_num")
-                ),getCommentsParam);
+                "GROUP BY C.comment_id;";
+        return this.template.query(getCommentsQuery, new commentMapper(),getCommentsParam);
+    }
+
+    // 내 프로필 - 내가 쓴 댓글 조회
+    public List<GetCommentRes> getCommentsByUser(long userId){
+        long getCommentsParam = userId;
+        String getCommentsQuery =
+                "SELECT C.comment_id, C.parent_id, C.content, U.nickname,U.profile_img, C.place, C.image_url, C.created_at, " +
+                        "(SELECT R.region_name FROM Region R WHERE R.region_id =(SELECT UR.region_id FROM UserRegion UR WHERE UR.user_id = U.user_id AND UR.is_representive=1)) AS region, " +
+                        "COUNT(CL.like_id) AS 'like_num' " +
+                        "FROM Comment C " +
+                        "LEFT JOIN UserInfo U " +
+                        "ON C.user_id = U.user_id " +
+                        "LEFT JOIN (SELECT like_id,comment_id FROM CommentLike WHERE status='ACTIVE') AS CL " +
+                        "ON C.comment_id = CL.comment_id " +
+                        "WHERE C.user_id=? " +
+                        "AND C.status='ACTIVE' " +
+                        "GROUP BY C.comment_id;";
+        return this.template.query(getCommentsQuery, new commentMapper(),getCommentsParam);
     }
     // 댓글 작성
     public long writeComment(PostCommentReq postCommentReq){
@@ -71,4 +80,20 @@ public class CommentDao {
         return commentId;
     }
 
+    public class commentMapper implements RowMapper<GetCommentRes>{
+        @Override
+        public GetCommentRes mapRow(ResultSet rs, int rowNum) throws SQLException {
+            GetCommentRes getProductRes = new GetCommentRes();
+            getProductRes.setCommentId(rs.getLong("comment_id"));
+            getProductRes.setParentId(rs.getLong("parent_id"));
+            getProductRes.setContent(rs.getString("content"));
+            getProductRes.setNickname(rs.getString("nickname"));
+            getProductRes.setProfileImg(rs.getString("profile_img"));
+            getProductRes.setPlace(rs.getString("place"));
+            getProductRes.setImgUrl(rs.getString("image_url"));
+            getProductRes.setRegion(rs.getString("region"));
+            getProductRes.setLikeNum(rs.getInt("like_num"));
+            return getProductRes;
+        }
+    }
 }

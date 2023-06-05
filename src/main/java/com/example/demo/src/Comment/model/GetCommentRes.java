@@ -7,15 +7,16 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class GetCommentRes {
-    long comment_id;
-    long parent_id;
+    long commentId;
+    long parentId;
     String content;
     String nickname;
-    String profile_img;
+    String profileImg;
     String place;
-    String img_url;
-    LocalDateTime created_at;
+    String imgUrl;
+    LocalDateTime createdAt;
     String region;
-    int like_num;
+    int likeNum;
 }

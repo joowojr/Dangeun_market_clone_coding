@@ -34,8 +34,9 @@ public class BoardService {
     @Transactional
     // 중고 상품 게시물 삭제
     public DeleteBoardRes deleteProduct(long boardId) throws BaseException{
-        if (boardDAO.checkBoardId(boardId)==0){
-            throw  new BaseException(BOARDS_EMPTY_BOARD_ID);
+        if (boardDAO.checkProductId(boardId)==0){
+            // 중고 게시물이 맞는지 확인
+            throw  new BaseException(PRODUCTS_EMPTY_BOARD_ID);
         }
         try {
             boardDAO.deleteProduct(boardId);
@@ -50,8 +51,8 @@ public class BoardService {
     //관심 누르기
     @Transactional
     public PostLikeBoardRes likeBoard (long boardId,long userId) throws BaseException{
-        if (boardDAO.checkBoardId(boardId)==0){
-            throw  new BaseException(BOARDS_EMPTY_BOARD_ID);
+        if (boardDAO.checkProductId(boardId)==0){
+            throw  new BaseException(PRODUCTS_EMPTY_BOARD_ID);
         }
         if (userDao.checkUserId(userId)==0){
             throw new BaseException(USERS_EMPTY_USER_ID);
@@ -72,8 +73,8 @@ public class BoardService {
     //관심 취소
     @Transactional
     public DeleteLikeBoardRes unlikeBoard(long boardId,long userId) throws BaseException{
-        if (boardDAO.checkBoardId(boardId)==0){
-            throw  new BaseException(BOARDS_EMPTY_BOARD_ID);
+        if (boardDAO.checkProductId(boardId)==0){
+            throw  new BaseException(PRODUCTS_EMPTY_BOARD_ID);
         }
         if (userDao.checkUserId(userId)==0){
             throw new BaseException(USERS_EMPTY_USER_ID);

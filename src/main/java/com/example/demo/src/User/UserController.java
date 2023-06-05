@@ -53,14 +53,14 @@ public class UserController {
     @PostMapping("/login/send-sms") String sendSms(@RequestParam String phoneNum){
         // 인증번호 생성
         Random rand  = new Random();
-        String numStr = "";
+        String certNum = "";
         for(int i=0; i<4; i++) {
             String ran = Integer.toString(rand.nextInt(10));
-            numStr+=ran;
+            certNum+=ran;
         }
         //문자 전송, 인증번호 리턴
-        this.smsService.sendSms(phoneNum,numStr);
-        return numStr;
+        this.smsService.sendSms(phoneNum,certNum);
+        return certNum;
     }
     /**
      * 로그인 API
@@ -164,12 +164,12 @@ public class UserController {
        }
     }
     /**
-     * 유저정보변경 API
+     * 프로필 수정 API
      * [PATCH] /users/:userId
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @PatchMapping("/{userId}")
+    @PatchMapping("/me/profile")
     public BaseResponse<PatchUserRes> modifyProfile(@PathVariable long userId, @RequestBody PatchUserReq user){
         try {
             //jwt에서 idx 추출.
@@ -181,7 +181,6 @@ public class UserController {
             //같다면 유저네임 변경
             PatchUserReq patchUserReq = new PatchUserReq(userId,user.getNickname(),user.getProfileImg());
             userService.modifyProfile(patchUserReq);
-
             PatchUserRes patchUserRes = new PatchUserRes(userId);
             return new BaseResponse<>(patchUserRes);
         } catch (BaseException exception) {

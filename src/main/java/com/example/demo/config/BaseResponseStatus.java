@@ -42,13 +42,15 @@ public enum BaseResponseStatus {
     POST_USERS_EXISTS_EMAIL(false, HttpStatus.BAD_REQUEST.value(), "중복돤 이메일입니다."),
 
     // boards
-    BOARDS_EMPTY_BOARD_ID(false, HttpStatus.BAD_REQUEST.value(), "게시물 아이디 값을 확인해주세요."),
+    PRODUCTS_EMPTY_BOARD_ID(false, HttpStatus.BAD_REQUEST.value(), "게시물 아이디 값을 확인해주세요."),
 
     // [POST] /boards
     POST_BOARDS_EMPTY_TITLE(false, HttpStatus.BAD_REQUEST.value(), "제목을 입력해주세요."),
     POST_BOARDS_EMPTY_CONTENT(false, HttpStatus.BAD_REQUEST.value(), "내용을 입력해주세요."),
     POST_BOARDS_EMPTY_IMAGE(false, HttpStatus.BAD_REQUEST.value(), "사진을 1장 이상 첨부해주세요."),
 
+    // reviews
+    REVIEWS_EMPTY_REVIEW_ID(false, HttpStatus.BAD_REQUEST.value(), "리뷰 아이디 값을 확인해주세요."),
 
     // comments
     COMMENT_EMPTY_COMMENT_ID(false, HttpStatus.BAD_REQUEST.value(), "댓글 아이디 값을 확인해주세요."),
@@ -57,7 +59,7 @@ public enum BaseResponseStatus {
     POST_COMMENT_EMPTY_CONTENT(false, HttpStatus.BAD_REQUEST.value(), "내용을 입력해주세요."),
 
     // login/kakao
-    KAKAO_ERROR(false, HttpStatus.BAD_REQUEST.value(), "카카오 액."),
+    KAKAO_CODE_EMPTY(false, HttpStatus.BAD_REQUEST.value(), "인가 코드를 입력해주세요"),
 
 
 

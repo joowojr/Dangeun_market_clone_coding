@@ -17,12 +17,10 @@ import static com.example.demo.config.BaseResponseStatus.USERS_EMPTY_USER_ID;
 public class ReviewProvider {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ReviewDao reviewDao;
-    private final ReviewService reviewService;
     private final UserDao userDao;
 
-    public ReviewProvider(ReviewDao reviewDao, ReviewService reviewService, UserDao userDao) {
+    public ReviewProvider(ReviewDao reviewDao, UserDao userDao) {
         this.reviewDao = reviewDao;
-        this.reviewService = reviewService;
         this.userDao = userDao;
     }
 

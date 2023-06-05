@@ -2,13 +2,10 @@ package com.example.demo.src.Board;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.Board.model.*;
-import com.example.demo.utils.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,7 +56,7 @@ public class BoardController {
     }
 
     /**
-     * 중고 게시물 1개 API
+     * 중고 게시물 1개 조회 API
      * [POST] /boards/products/:boardId
      * @return BaseResponse<GetProductRes>
      */
@@ -84,7 +81,6 @@ public class BoardController {
     @GetMapping("/boards/products")
     public BaseResponse<List<GetProductRes>> getProductList(){
         try {
-
             List<GetProductRes> getProductRes = boardProvider.getProductList();
             return new BaseResponse<>(getProductRes);
         } catch (BaseException exception) {
@@ -100,7 +96,7 @@ public class BoardController {
     @DeleteMapping("/products/{boardId}")
     public BaseResponse<DeleteBoardRes> deleteProduct(@PathVariable Long boardId){
         if (boardId==null){
-            return new BaseResponse<>(BOARDS_EMPTY_BOARD_ID);
+            return new BaseResponse<>(PRODUCTS_EMPTY_BOARD_ID);
         }
         try {
             DeleteBoardRes deleteBoardRes = boardService.deleteProduct(boardId);

@@ -9,6 +9,7 @@ import com.example.demo.src.User.model.PostUserRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import static com.example.demo.config.BaseResponseStatus.KAKAO_CODE_EMPTY;
 import static com.example.demo.utils.ValidationRegex.isRegexPhoneNum;
 
 @RestController
@@ -25,57 +26,29 @@ public class KakaoController {
         this.userService = userService;
     }
 
-    @ResponseBody
-    @GetMapping("")
-    public void kakaoCallback(@RequestParam String code) {
-        System.out.println(code);
-    }
-
     /**
-     * 카카오 액세스 토큰 API
-     * [GET] /users/login/kakao
+     * 카카오 유저 정보 받는 API
+     * [GET] /users/signup/kakao
      * @return BaseResponse<PostLoginRes>
      */
     @ResponseBody
-    @GetMapping ("/users/kakao")
-    public void getKaKaoAccessToken(@RequestParam String code) {
-        kakaoService.getKaKaoAccessToken(code);
-    }
-
-    /**
-     * 카카오 회원가입 API
-     * [GET] /users/kakao
-     *
-     * @return BaseResponse<PostLoginRes>
-     */
-    @ResponseBody
-    @PostMapping("/users/kakao")
-    public BaseResponse<PostUserRes> createKakaoUser(@RequestBody PostUserReq postUserReq){
-        if(postUserReq.getPhoneNum()==null){
-            return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_PHONENUM);
+    @PostMapping ("/users/signup/kakao")
+    public BaseResponse<String> getKaKaoUserInfo(@RequestParam String code) {
+        if (code==null)return new BaseResponse<>(KAKAO_CODE_EMPTY);
+        try {
+            String token = kakaoService.getKakaoAccessToken(code);
+            return new BaseResponse<>(kakaoService.getKakaoUserInfo(token));
         }
-        if(postUserReq.getNickname()==null){
-            return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_NICKNAME);
-        }
-        if (postUserReq.getEmail()==null){
-            return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_EMAIL);
-        }
-        //전화번호 정규표현
-        if(!isRegexPhoneNum(postUserReq.getPhoneNum())){
-            return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PHONENUM);
-        }
-        //이메일 정규표현
-        if (!isRegexPhoneNum(postUserReq.getEmail())){
-            return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_EMAIL);
-        }
-        try{
-            PostUserRes postUserRes = userService.createUser(postUserReq);
-            return new BaseResponse<>(postUserRes);
-        } catch(BaseException exception){
+        catch (BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
     }
 
+    /**
+     * 카카오 로그인 API
+     * [GET] /users/login/kakao
+     * @return BaseResponse<PostLoginRes>
+     */
 
 
 

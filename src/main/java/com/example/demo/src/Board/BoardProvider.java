@@ -26,8 +26,8 @@ public class BoardProvider {
     // 포스트 1개 조회
     @Transactional(readOnly = true)
     public GetProductRes getProduct(long boardId) throws BaseException {
-        if (boardDAO.checkBoardId(boardId)==0){
-            throw  new BaseException(BOARDS_EMPTY_BOARD_ID);
+        if (boardDAO.checkProductId(boardId)==0){
+            throw  new BaseException(PRODUCTS_EMPTY_BOARD_ID);
         }
         try {
             GetProductRes getProductRes = boardDAO.getProduct(boardId);

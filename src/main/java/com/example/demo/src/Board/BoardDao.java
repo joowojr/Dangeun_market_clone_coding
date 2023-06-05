@@ -21,10 +21,10 @@ public class BoardDao {
     }
 
     //
-    public int checkBoardId(long boardId){
-        String checkBoardIdQuery = "SELECT exists(SELECT board_id FROM Board WHERE board_id=?)";
-        long checkBoardIdParam = boardId;
-        return this.template.queryForObject(checkBoardIdQuery,int.class,checkBoardIdParam);
+    public int checkProductId(long boardId){
+        String checkProductIdQuery = "SELECT exists(SELECT board_id FROM Product WHERE board_id=?)";
+        long checkProductIdParam = boardId;
+        return this.template.queryForObject(checkProductIdQuery,int.class,checkProductIdParam);
     }
 
     // 중고 상품게시물 작성

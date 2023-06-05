@@ -2,11 +2,9 @@ package com.example.demo.src.Kakao;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponseStatus;
-import com.example.demo.src.User.UserDao;
 import com.example.demo.src.User.UserProvider;
 import com.example.demo.src.User.model.PostUserReq;
 import com.example.demo.src.User.model.PostUserRes;
-import com.example.demo.utils.JwtService;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.jetbrains.annotations.NotNull;
@@ -20,25 +18,24 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
+import static com.example.demo.config.BaseResponseStatus.KAKAO_CODE_EMPTY;
 
 @Service
 public class KakaoService {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private static UserDao userDao;
-    private static UserProvider userProvider;
-    private JwtService jwtService;
 
-    private final static String KAKAO_CLIENT_ID="3dd45b93f09d5dc352add2fd1fbc411c";
-    private final static String KAKAO_REDIRECT_URI="https://localhost:9000/login/kakao";
+    private final static String KAKAO_CLIENT_ID="c122074d216f863250738e4212064fe1";
+    private final static String KAKAO_REDIRECT_URI="https://localhost:9000/users/login/kakao";
     private final static String PROFILE_API_URL= "https://kapi.kakao.com/v2/user/me";
     private final static String KAKAO_OAUTH_URL = "https://kauth.kakao.com/oauth/token";
+
     //카카오 로그인 액세스 토큰
     @Transactional
-    public String getKaKaoAccessToken(String code){
-        String access_Token="";
-        String refresh_Token ="";
+    public String getKakaoAccessToken (String code) {
+        String access_Token = "";
+        String refresh_Token = "";
 
-        try{
+        try {
             URL url = new URL(KAKAO_OAUTH_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -59,6 +56,7 @@ public class KakaoService {
             //결과 코드가 200이라면 성공
             int responseCode = conn.getResponseCode();
             System.out.println("responseCode : " + responseCode);
+
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line = "";
@@ -81,15 +79,17 @@ public class KakaoService {
 
             br.close();
             bw.close();
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         return access_Token;
     }
 
+
     //카카오 유저 정보 얻어오기
-    public String getKakaoUserInfo(String token) throws BaseException{
+    public String getKakaoUserInfo(String token) throws BaseException {
+        String email = "";
         //access_token을 이용하여 사용자 정보 조회
         try {
             URL url = new URL(PROFILE_API_URL);
@@ -119,7 +119,7 @@ public class KakaoService {
 
             int id = element.getAsJsonObject().get("id").getAsInt();
             boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
-            String email = "";
+
             if(hasEmail){
                 email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
             }
@@ -129,31 +129,9 @@ public class KakaoService {
 
         } catch (IOException e) {
             e.printStackTrace();
-            throw new BaseException(BaseResponseStatus.KAKAO_ERROR);
+            throw  new  BaseException(KAKAO_CODE_EMPTY);
         }
+
     }
 
-    //카카오 유저 생성하기
-    public PostUserRes createKakaoUser(@NotNull PostUserReq postUserReq) throws BaseException {
-        // 전화번호 중복
-        if (userProvider.checkPhoneNum(postUserReq.getPhoneNum())==1){
-            throw new BaseException(BaseResponseStatus.POST_USERS_EXISTS_PHONENUM);
-        }
-        // 닉네임 중복
-        if (userProvider.checkNickname(postUserReq.getNickname())==1){
-            throw new BaseException(BaseResponseStatus.POST_USERS_EXISTS_NICKNAME);
-        }
-        //  이메일 중복
-        if (userProvider.checkEmail(postUserReq.getEmail())==1){
-            throw new BaseException(BaseResponseStatus.POST_USERS_EXISTS_NICKNAME);
-        }
-        try{
-            long userId = userDao.createUser(postUserReq);
-            //jwt 발급.
-            String jwt = jwtService.createJwt(userId);
-            return new PostUserRes(jwt,userId);
-        } catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
 }

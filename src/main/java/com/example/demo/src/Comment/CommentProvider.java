@@ -3,7 +3,6 @@ package com.example.demo.src.Comment;
 import com.example.demo.config.BaseException;
 import com.example.demo.src.Board.BoardDao;
 import com.example.demo.src.Comment.model.GetCommentRes;
-import com.example.demo.utils.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -25,12 +24,27 @@ public class CommentProvider {
     }
 
     @Transactional(readOnly = true)
-    public List<GetCommentRes> getComments(long boardId) throws BaseException {
-        if (boardDao.checkBoardId(boardId)==0){
-            throw  new BaseException(BOARDS_EMPTY_BOARD_ID);
+    public List<GetCommentRes> getCommentsByUser(long userId) throws BaseException {
+        if (boardDao.checkProductId(userId)==0){
+            throw  new BaseException(USERS_EMPTY_USER_ID);
         }
         try {
-            List<GetCommentRes> getCommentRes = commentDao.getComments(boardId);
+            List<GetCommentRes> getCommentRes = commentDao.getCommentsByUser(userId);
+            return getCommentRes;
+        }
+        catch (Exception exception){
+            // Logger를 이용하여 에러를 로그에 기록한다
+            logger.error("Error!", exception);
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    @Transactional(readOnly = true)
+    public List<GetCommentRes> getCommentsByBoard(long boardId) throws BaseException {
+        if (boardDao.checkProductId(boardId)==0){
+            throw  new BaseException(PRODUCTS_EMPTY_BOARD_ID);
+        }
+        try {
+            List<GetCommentRes> getCommentRes = commentDao.getCommentsByBoard(boardId);
             return getCommentRes;
         }
         catch (Exception exception){
