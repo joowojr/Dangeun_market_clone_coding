@@ -1,0 +1,98 @@
+package com.example.demo.src.User;
+
+
+
+import com.example.demo.config.BaseException;
+import com.example.demo.config.BaseResponseStatus;
+import com.example.demo.src.User.model.PatchUserReq;
+import com.example.demo.src.User.model.PostLoginRes;
+import com.example.demo.src.User.model.PostUserReq;
+import com.example.demo.src.User.model.PostUserRes;
+import com.example.demo.utils.JwtService;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import static com.example.demo.config.BaseResponseStatus.*;
+
+// Service Create, Update, Delete 의 로직 처리
+@Service
+public class UserService {
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private final UserDao userDao;
+    private final UserProvider userProvider;
+    private final JwtService jwtService;
+
+
+    @Autowired
+    public UserService(UserDao userDao, UserProvider userProvider, JwtService jwtService) {
+        this.userDao = userDao;
+        this.userProvider = userProvider;
+        this.jwtService = jwtService;
+
+    }
+
+    // 회원가입
+    @Transactional
+    public PostUserRes createUser(@NotNull PostUserReq postUserReq) throws BaseException {
+        // 이메일 중복
+        if (!(postUserReq.getEmail()==null) & userProvider.checkEmail(postUserReq.getEmail())==1){
+            throw new BaseException(POST_USERS_EXISTS_EMAIL);
+        }
+        // 전화번호 중복
+        if (userProvider.checkPhoneNum(postUserReq.getPhoneNum())==1){
+            throw new BaseException(BaseResponseStatus.POST_USERS_EXISTS_PHONENUM);
+        }
+        // 닉네임 중복
+        if (userProvider.checkNickname(postUserReq.getNickname())==1){
+            throw new BaseException(BaseResponseStatus.POST_USERS_EXISTS_NICKNAME);
+        }
+        try{
+            long userId = userDao.createUser(postUserReq);
+            //jwt 발급.
+            String jwt = jwtService.createJwt(userId);
+            return new PostUserRes(jwt,userId);
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    @Transactional
+    public PostLoginRes login(String phoneNum) throws BaseException{
+        try{
+            long userId = userDao.getUserByPhoneNum(phoneNum);
+            //jwt 발급.
+            String jwt = jwtService.createJwt(userId);
+            return new PostLoginRes(userId,jwt);
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional
+    public void modifyProfile(PatchUserReq patchUserReq) throws BaseException {
+        try{
+            //닉네임 수정
+            int nicknameResult = userDao.modifyNickname(patchUserReq);
+            if(nicknameResult == 0){
+                throw new BaseException(MODIFY_FAIL_NICKNAME);
+            }
+            //프로필 사진 수정
+            int profileImgResult = userDao.modifyProfileImg(patchUserReq);
+            if(profileImgResult == 0){
+                throw new BaseException(MODIFY_FAIL_PROFILEIMG);
+            }
+        } catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+}

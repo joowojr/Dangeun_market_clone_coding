@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.example.demo.config.BaseResponseStatus.POST_USERS_EXISTS_EMAIL;
 
 @RestController
 @RequestMapping("/test")

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="3abb6ee3-eb25-4ff1-8c6c-088a0825af1f" name="spring" url="http://dana-seo.shop">
+        <fileTransfer rootFolder="/var/www/SpringbootTemplete" accessType="SFTP" host="3.34.76.233" port="22" sshConfigId="0f594a41-2488-40ef-b66c-52fde85b49a8" sshConfig="root@3.34.76.233:22 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
